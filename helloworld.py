@@ -137,7 +137,11 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     try:
       logging.info("result: %s", dir(result))
-      expanded_url = result.url
+      expanded_url = row[1] # the url
+      try:
+        expanded_url = result.final_url
+      except:
+        pass
       soup = BeautifulSoup(result)
       title = soup.title.string
 
