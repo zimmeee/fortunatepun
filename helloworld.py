@@ -128,7 +128,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
 
-
     try:
       logging.info("result: %s", dir(result))
       expanded_url = row[1] # the url
@@ -149,11 +148,18 @@ class URLExpanderHandler(webapp2.RequestHandler):
         logging.warning("Exception: %s", e)
         title = None
 
+      fail = False
       if expanded_url and title:
-        cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
-
+        try:
+          cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
+        except:
+          fail = True
       elif expanded_url:
         cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
+
+      if fail:
+        if expanded_url:
+          cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
 
       db.commit()
       db.close()
