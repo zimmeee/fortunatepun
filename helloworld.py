@@ -136,7 +136,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
   def clean_urlfetch_result(self, result, cursor, row):
 
     try:
-      expanded_url = result.geturl()
+      logging.info("result: %s", dir(result))
+      expanded_url = result.url
       soup = BeautifulSoup(result)
       title = soup.title.string
 
