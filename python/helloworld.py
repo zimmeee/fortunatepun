@@ -1,6 +1,7 @@
 import cgi
 import webapp2
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import urlfetch
 
 import MySQLdb
 import os
@@ -87,14 +88,48 @@ class Display(webapp2.RequestHandler):
     db.close()
 
 
-application = webapp2.WSGIApplication([('/', MainPage),
-                               ('/sign', Guestbook)],
-                              debug=True)
+class GetAllUsersTweetsHandler(webapp2.RequestHandler):
+
+  def get(self):
+    # Get a list of all of the users in the oauths table
+    db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
+                          user='root', passwd='thatspunny' )
+
+    cursor = db.cursor()
+    cursor.execute('SELECT twitter_id FROM tokens')
+    for row in cursor.fetchall():
+      url = "http://www.google.com/?twitterid=" + row[0]
+      result = urlfetch.fetch(url)
+
+    self.response.write("""<html><body>All Good</body></html>""")
+    db.close()
+
+
+class GetUserURLsHandler(webapp2.RequestHandler):
+
+  def get(self, twitter_handle):
+    # Get a list of the top URLs in the table.
+    db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
+                          user='root', passwd='thatspunny' )
+
+    now = datetime.datetime.utcnow()
+    cursor = db.cursor()
+    cursor.execute('SELECT twitter_id FROM tokens')
+    for row in cursor.fetchall():
+
+
+
+    db.close()
+
+
 
 def main():
     application = webapp2.WSGIApplication([('/', MainPage),
-                                           ('/sign', Guestbook)],
-                                          debug=True)
+                    ('/sign', Guestbook),
+                    ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
+                    ('/(.+)', GetUserURLsHandler)],
+                    debug=True)
+
     run_wsgi_app(application)
 
 if __name__ == "__main__":

@@ -1,0 +1,4 @@
+cron:
+- description: Find all the users and queue up fetching tweets
+  url: /tasks/getalluserstweets
+  schedule: every 2 minutes
