@@ -91,15 +91,17 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                           user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT urlid, count(*) as votes FROM URLer WHERE twitter_id=789 AND tweet_time < (NOW() - 24) GROUP BY 1 ORDER BY 2 DESC;' )
+    cursor.execute('SELECT urlid, url, count(*) as votes FROM URLer JOIN URL USING(urlid) WHERE twitter_id=789 AND tweet_time < (NOW() - 24) GROUP BY 1 ORDER BY 2 DESC;' )
 
     urllist = [];
     for row in cursor.fetchall():
-      urllist.append(dict([('urlid',cgi.escape(row[0])),
-                             ('votes',cgi.escape(row[1]))
+      urllist.append(dict([ ('urlid',cgi.escape(row[0])),
+                            ('url',cgi.escape(row[1])),
+                            ('votes',cgi.escape(row[2]))
                              ]))
 
-    variables = {'urllist': urllist}
+    variables = { 'urllist': urllist,
+                  'twitter_handle': twitter_handle }
     template = JINJA_ENVIRONMENT.get_template('main.html')
     self.response.write(template.render(variables))
     db.close()
