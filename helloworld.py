@@ -138,7 +138,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
     try:
       expanded_url = result.geturl()
       soup = BeautifulSoup(result)
-      title soup.title.string
+      title = soup.title.string
 
       title = 
       if expanded_url and title:
