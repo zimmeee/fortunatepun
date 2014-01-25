@@ -7,6 +7,8 @@ import MySQLdb
 import os
 import jinja2
 
+import logging
+
 # Configure the Jinja2 environment.
 JINJA_ENVIRONMENT = jinja2.Environment(
   loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -96,9 +98,10 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
     urllist = [];
     for row in cursor.fetchall():
-      urllist.append(dict([ ('urlid',cgi.escape(row[0])),
-                            ('url',cgi.escape(row[1])),
-                            ('votes',cgi.escape(row[2]))
+      logging.info( 'row: %s', row )
+      urllist.append(dict([ ('urlid', row[0] ),
+                            ('url',   row[1] ),
+                            ('votes', row[2] )
                              ]))
 
     variables = { 'urllist': urllist,
