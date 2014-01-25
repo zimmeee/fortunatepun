@@ -142,9 +142,12 @@ class URLExpanderHandler(webapp2.RequestHandler):
         expanded_url = result.final_url
       except:
         pass
-      soup = BeautifulSoup(result)
-      title = soup.title.string
+      logging.info("expanded_url: %s", expanded_url)
 
+      soup = BeautifulSoup(result.content)
+      logging.info("soup: %s", soup)
+      title = soup.title.string
+      logging.info("title: %s", title)
       if expanded_url and title:
         cursor.execute('UPDATE URL SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row[0])
 
