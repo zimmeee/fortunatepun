@@ -72,8 +72,14 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
 
   def get(self):
     # Get a list of all of the users in the oauths table
-    db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
-                          user='root', passwd='thatspunny' )
+
+    if (os.getenv('SERVER_SOFTWARE') and
+        os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+        db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='guestbook', user='root')
+    else:
+        # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+        # Alternately, connect to a Google Cloud SQL instance using:
+        db = MySQLdb.connect(host='173.194.109.208', port=3306, db='guestbook', user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
     cursor.execute('SELECT twitter_id FROM tokens;')
@@ -89,8 +95,13 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
   def get(self, twitter_handle):
     # Get a list of the top URLs in the table.
-    db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
-                          user='root', passwd='thatspunny' )
+    if (os.getenv('SERVER_SOFTWARE') and
+        os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+        db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='guestbook', user='root')
+    else:
+        # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+        # Alternately, connect to a Google Cloud SQL instance using:
+        db = MySQLdb.connect(host='173.194.109.208', port=3306, db='guestbook', user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
     cursor.execute('SELECT urlid, url, count(*) as votes FROM URLer JOIN URL USING(urlid) WHERE twitter_id=789 AND tweet_time < (NOW() - 24) GROUP BY 1 ORDER BY 2 DESC;' )
