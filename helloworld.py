@@ -105,6 +105,12 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     db.close()
 
 
+application = webapp2.WSGIApplication([('/', MainPage),
+                ('/sign', Guestbook),
+                ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
+                ('/(.+)', GetUserURLsHandler)],
+                debug=True)
+
 def main():
     application = webapp2.WSGIApplication([('/', MainPage),
                     ('/sign', Guestbook),

@@ -3,7 +3,9 @@ CREATE TABLE URLer(
    urlid			INT NOT NULL,
    twitter_id		BIGINT NOT NULL,
    twitter_handle	VARCHAR(16) NOT NULL,
-   tweet_time 		DATETIME
+   tweetid			BIGINT,
+   tweet_time 		DATETIME,
+   UNIQUE(tweetid)
 );
 
 DROP TABLE IF EXISTS URL;
@@ -11,9 +13,7 @@ CREATE TABLE URL(
 	urlid		INT NOT NULL AUTO_INCREMENT,
 	t_url		VARCHAR(24),
 	url			VARCHAR(2000),
-	tweetid		VARCHAR(200),
-	PRIMARY KEY ( urlid ),
-	UNIQUE(tweetid)
+	PRIMARY KEY ( urlid )
 );
 
 DROP TABLE IF EXISTS tokens;
@@ -25,12 +25,12 @@ CREATE TABLE tokens(
 );
 
 
-INSERT INTO URLer VALUES(1,789, 'zimmeee', NOW() );
-INSERT INTO URLer VALUES(1,789, 'rbruggner', NOW() );
-INSERT INTO URLer VALUES(1,789, 'wasauce', NOW() );
+INSERT INTO URLer VALUES(1,789, 'zimmeee', 1, NOW() );
+INSERT INTO URLer VALUES(1,789, 'rbruggner', 2, NOW() );
+INSERT INTO URLer VALUES(1,789, 'wasauce', 3, NOW() );
 
-INSERT INTO URLer VALUES(3,789, 'zimmeee', NOW() );
-INSERT INTO URLer VALUES(2,789, 'rbruggner', NOW() );
-INSERT INTO URLer VALUES(3,789, 'wasauce', NOW() );
+INSERT INTO URLer VALUES(3,789, 'zimmeee', 4, NOW() );
+INSERT INTO URLer VALUES(2,789, 'rbruggner', 5, NOW() );
+INSERT INTO URLer VALUES(3,789, 'wasauce', 6, NOW() );
 
 
