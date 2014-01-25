@@ -12,7 +12,7 @@ import logging
 import sys
 sys.path.insert(0, 'libs')
 
-from bs4 import BeautifulSoup
+import BeautifulSoup
 
 
 
