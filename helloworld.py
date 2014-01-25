@@ -76,7 +76,7 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
                           user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT twitter_id FROM tokens')
+    cursor.execute('SELECT twitter_id FROM tokens;')
     for row in cursor.fetchall():
       url = "http://fortunatepun.appspot.com/eatTweets?twitterId=" + row[0]
       result = urlfetch.fetch(url)
