@@ -115,15 +115,10 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 application = webapp2.WSGIApplication([('/', MainPage),
                 ('/sign', Guestbook),
                 ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
-                ('/(.+)', GetUserURLsHandler)],
+                ('/t/(.+)', GetUserURLsHandler)],
                 debug=True)
 
 def main():
-    application = webapp2.WSGIApplication([('/', MainPage),
-                    ('/sign', Guestbook),
-                    ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
-                    ('/(.+)', GetUserURLsHandler)],
-                    debug=True)
 
     run_wsgi_app(application)
 

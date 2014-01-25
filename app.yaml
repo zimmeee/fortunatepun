@@ -8,8 +8,14 @@ handlers:
 - url: /.*
   script: helloworld.application
 
-- url: /dist
-  static_dir: dist
+- url: /dist/css
+  static_dir: dist/css
+
+- url: /dist/js
+  static_dir: dist/js
+
+- url: /dist/fonts
+  static_dir: dist/fonts
 
 libraries:
 - name: MySQLdb
