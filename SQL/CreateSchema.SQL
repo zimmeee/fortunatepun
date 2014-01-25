@@ -33,4 +33,7 @@ INSERT INTO URLer VALUES(3,789, 'zimmeee', 4, NOW() );
 INSERT INTO URLer VALUES(2,789, 'rbruggner', 5, NOW() );
 INSERT INTO URLer VALUES(3,789, 'wasauce', 6, NOW() );
 
+INSERT INTO URL VALUES(1,'a.co', 'http://www.twitter.com' );
+INSERT INTO URL VALUES(2,'b.co', 'http://www.kyron.com' );
+INSERT INTO URL VALUES(3,'c.co', 'http://www.nytimes.com' );
 
