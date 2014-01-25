@@ -76,7 +76,7 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
     cursor = db.cursor()
     cursor.execute('SELECT twitter_id FROM tokens')
     for row in cursor.fetchall():
-      url = "http://www.google.com/?twitterid=" + row[0]
+      url = "http://fortunatepun.appspot.com/eatTweets?twitterId=" + row[0]
       result = urlfetch.fetch(url)
 
     self.response.write("""<html><body>All Good</body></html>""")
@@ -101,7 +101,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                              ]))
 
     variables = {'urllist': urllist}
-    template = JINJA_ENVIRONMENT.get_template('main.html')
+    template = JINJA_ENVIRONMENT.get_template('urls.html')
     self.response.write(template.render(variables))
     db.close()
 
