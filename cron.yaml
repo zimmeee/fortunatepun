@@ -2,3 +2,8 @@ cron:
 - description: Find all the users and queue up fetching tweets
   url: /tasks/getalluserstweets
   schedule: every 2 minutes
+
+- description: Find all the urls without a XXX field.
+  url: /tasks/urlexpander
+  schedule: every 1 minute
+
