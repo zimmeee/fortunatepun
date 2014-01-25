@@ -24,6 +24,7 @@ _INSTANCE_NAME = 'fortunatepun:datastore'
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
+        logging.info("request!")
         # Display existing guestbook entries and a form to add new entries.
         if (os.getenv('SERVER_SOFTWARE') and
             os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
@@ -98,6 +99,7 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
 class GetUserURLsHandler(webapp2.RequestHandler):
 
   def get(self, twitter_handle):
+    logging.info("twitter_handle: %s", twitter_handle)
     # Get a list of the top URLs in the table.
     if (os.getenv('SERVER_SOFTWARE') and
         os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
@@ -139,10 +141,17 @@ class URLExpanderHandler(webapp2.RequestHandler):
       title = soup.title.string
 
       if expanded_url and title:
+<<<<<<< HEAD
         cursor.execute('UPDATE URL SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row['urlid'])
 
       elif expanded_url:
         cursor.execute('UPDATE URL SET expanded_url=%s WHERE urlid = %s', expanded_url, row['urlid'])
+=======
+        cursor.execute('UPDATE url SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row[0])
+
+      elif expanded_url:
+        cursor.execute('UPDATE url SET expanded_url=%s WHERE urlid = %s', expanded_url, row[0])
+>>>>>>> 5cdbf5c54d74dc645da8471b1afc58cea5c850f3
     except Exception as e:
       logging.error("e: %s", e)
 
@@ -161,12 +170,15 @@ class URLExpanderHandler(webapp2.RequestHandler):
     cursor = db.cursor()
     cursor.execute('SELECT * from URL WHERE expanded_url is NULL')
     for row in cursor.fetchall():
-      logging.info( 'row: %s', row )
-      result = urlfetch.fetch(row['t_url'])
-      if result.status_code == 200:
-        self.clean_urlfetch_result(result, cursor, row)
-      else:
-        logging.error("Problem with row: %s", row)
+      try:
+        logging.info( 'row: %s', row )
+        result = urlfetch.fetch(row[1])
+        if result.status_code == 200:
+          self.clean_urlfetch_result(result, cursor, row)
+        else:
+          logging.error("Problem with row: %s", row)
+      except Exception as e:
+        logging.error("e: %s", e)
 
     db.close()
 
