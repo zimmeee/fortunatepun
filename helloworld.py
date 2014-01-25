@@ -9,9 +9,6 @@ import jinja2
 
 import logging
 
-import sys
-sys.path.insert(0, 'libs')
-
 import BeautifulSoup
 
 
@@ -148,6 +145,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
       elif expanded_url:
         cursor.execute('UPDATE URL SET expanded_url=%s WHERE urlid = %s', expanded_url, row[0])
+
     except Exception as e:
       logging.error("e: %s", e)
 
