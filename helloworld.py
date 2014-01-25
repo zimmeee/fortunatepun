@@ -146,14 +146,13 @@ class URLExpanderHandler(webapp2.RequestHandler):
       logging.info("result.content: %s", result.content)
 
       soup = BeautifulSoup(result.content)
-      logging.info("soup: %s", soup)
       title = soup.title.string
       logging.info("title: %s", title)
       if expanded_url and title:
-        cursor.execute('UPDATE URL SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row[0])
+        cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
 
       elif expanded_url:
-        cursor.execute('UPDATE URL SET expanded_url=%s WHERE urlid = %s', expanded_url, row[0])
+        cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
 
     except Exception as e:
       logging.error("e: %s", e)
