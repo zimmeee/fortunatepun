@@ -102,9 +102,13 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                             ('votes', row[2] )
                              ]))
 
-    variables = { 'urllist': urllist,
+    if not urllist:
+      variables = { 'twitter_handle': twitter_handle }
+      template = JINJA_ENVIRONMENT.get_template('nourls.html')
+    else:
+      variables = { 'urllist': urllist,
                   'twitter_handle': twitter_handle }
-    template = JINJA_ENVIRONMENT.get_template('urls.html')
+      template = JINJA_ENVIRONMENT.get_template('urls.html')
 
     self.response.write(template.render(variables))
     db.close()
