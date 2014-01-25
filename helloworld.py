@@ -144,10 +144,10 @@ class URLExpanderHandler(webapp2.RequestHandler):
       title = soup.title.string
 
       if expanded_url and title:
-        cursor.execute('UPDATE url SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row[0])
+        cursor.execute('UPDATE URL SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row[0])
 
       elif expanded_url:
-        cursor.execute('UPDATE url SET expanded_url=%s WHERE urlid = %s', expanded_url, row[0])
+        cursor.execute('UPDATE URL SET expanded_url=%s WHERE urlid = %s', expanded_url, row[0])
     except Exception as e:
       logging.error("e: %s", e)
 
@@ -164,7 +164,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT * from url WHERE expanded_url is NULL')
+    cursor.execute('SELECT * from URL WHERE expanded_url is NULL')
     for row in cursor.fetchall():
       try:
         logging.info( 'row: %s', row )
