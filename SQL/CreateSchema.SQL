@@ -4,8 +4,7 @@ CREATE TABLE URLer(
    twitter_id		BIGINT NOT NULL,
    twitter_handle	VARCHAR(16) NOT NULL,
    tweetid			BIGINT,
-   tweet_time 		DATETIME,
-   UNIQUE(tweetid)
+   tweet_time 		DATETIME
 );
 
 DROP TABLE IF EXISTS URL;
