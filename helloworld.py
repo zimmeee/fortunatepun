@@ -65,28 +65,6 @@ class Guestbook(webapp2.RequestHandler):
 
         self.redirect("/")
 
-class Display(webapp2.RequestHandler):
-  def get(self):
-    # Display existing guestbook entries and a form to add new entries.
-    db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
-                          user='root', passwd='thatspunny' )
-
-    cursor = db.cursor()
-    cursor.execute('SELECT guestName, content, entryID FROM entries')
-
-    # Create a list of guestbook entries to render with the HTML.
-    guestlist = [];
-    for row in cursor.fetchall():
-      guestlist.append(dict([('name',cgi.escape(row[0])),
-                             ('message',cgi.escape(row[1])),
-                             ('ID',row[2])
-                             ]))
-
-    variables = {'guestlist': guestlist}
-    template = JINJA_ENVIRONMENT.get_template('main.html')
-    self.response.write(template.render(variables))
-    db.close()
-
 
 class GetAllUsersTweetsHandler(webapp2.RequestHandler):
 
@@ -112,15 +90,19 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     db = MySQLdb.connect( host='173.194.109.208', port=3306, db='fortunatepun', 
                           user='root', passwd='thatspunny' )
 
-    now = datetime.datetime.utcnow()
     cursor = db.cursor()
-    cursor.execute('SELECT twitter_id FROM tokens')
+    cursor.execute('SELECT urlid, count(*) as votes FROM URLer WHERE twitter_id=789 AND tweet_time < (NOW() - 24) GROUP BY 1 ORDER BY 2 DESC;' )
+
+    urllist = [];
     for row in cursor.fetchall():
+      urllist.append(dict([('urlid',cgi.escape(row[0])),
+                             ('votes',cgi.escape(row[1]))
+                             ]))
 
-
-
+    variables = {'urllist': urllist}
+    template = JINJA_ENVIRONMENT.get_template('main.html')
+    self.response.write(template.render(variables))
     db.close()
-
 
 
 def main():

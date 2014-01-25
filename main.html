@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Guestbook!</title>
+    <title>Fortunate Pun</title>
   </head>
   <body>
     <body>
@@ -12,21 +12,13 @@
             <th style="background-color: #CCFFCC; margin: 5px">Message</th>
             <th style="background-color: #CCFFCC; margin: 5px">ID</th>
           </tr>
-          {% for guest in guestlist %}
+          {% for url in urllist %}
              <tr>
-               <td>{{ guest['name'] }}</td>
-               <td>{{ guest['message'] }}</td>
-               <td>{{ guest['ID'] }}</td>
+               <td>{{ url['urlid'] }}</td>
+               <td>{{ url['votes'] }}</td>
              </tr>
           {% endfor %}
         </tbody>
       </table>
-      <br /> No more messages!
-      <br /><strong>Sign the guestbook!</strong>
-      <form action="/sign" method="post">
-        <div>First Name: <input type="text" name="fname" style="border: 1px solid black"></div>
-        <div>Message: <br /><textarea name="content" rows="3" cols="60"></textarea></div>
-        <div><input type="submit" value="Sign Guestbook"></div>
-      </form>
   </body>
 </html>
