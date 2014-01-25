@@ -97,9 +97,15 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     urllist = [];
     for row in cursor.fetchall():
       logging.info( 'row: %s', row )
+
+      title = row[4]
+      if not row[4]:
+        title = [3]
+
       urllist.append(dict([ ('urlid', row[0] ),
                             ('url',   row[1] ),
-                            ('votes', row[2] )
+                            ('votes', row[2] ),
+                            ('title', title ),
                              ]))
 
     if not urllist:
