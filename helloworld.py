@@ -90,7 +90,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    query_string = '''SELECT urlid, url, count(*) as votes FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY 1 ORDER BY 2 DESC;'''.format(twitter_handle)
+    query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
 
     cursor.execute( query_string )
 
@@ -100,13 +100,16 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
       title = row[4]
       if not row[4]:
-        title = [3]
+        title = row[3]
 
-      urllist.append(dict([ ('urlid', row[0] ),
+      temp_dict = dict([ ('urlid', row[0] ),
                             ('url',   row[1] ),
                             ('votes', row[2] ),
                             ('title', title ),
-                             ]))
+                             ])
+      logging.info("dict:%s", temp_dict)
+      urllist.append(temp_dict)
+
 
     if not urllist:
       variables = { 'twitter_handle': twitter_handle }
