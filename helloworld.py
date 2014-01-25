@@ -9,9 +9,6 @@ import jinja2
 
 import logging
 
-import sys
-sys.path.insert(0, 'libs')
-
 import BeautifulSoup
 
 
@@ -142,10 +139,10 @@ class URLExpanderHandler(webapp2.RequestHandler):
       title = soup.title.string
 
       if expanded_url and title:
-        cursor.execute('UPDATE url SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row['urlid'])
+        cursor.execute('UPDATE URL SET expanded_url=%s, title=%s WHERE urlid = %s', expanded_url, title, row['urlid'])
 
       elif expanded_url:
-        cursor.execute('UPDATE url SET expanded_url=%s WHERE urlid = %s', expanded_url, row['urlid'])
+        cursor.execute('UPDATE URL SET expanded_url=%s WHERE urlid = %s', expanded_url, row['urlid'])
     except Exception as e:
       logging.error("e: %s", e)
 
@@ -162,7 +159,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT * from url WHERE expanded_url is NULL')
+    cursor.execute('SELECT * from URL WHERE expanded_url is NULL')
     for row in cursor.fetchall():
       logging.info( 'row: %s', row )
       result = urlfetch.fetch(row['t_url'])
