@@ -139,6 +139,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
         soup = BeautifulSoup(result.content)
         title = soup.title.string
         logging.info("title: %s", title)
+        title = cgi.escape(title)
+        logging.info("title: %s", title)
       except Exception as e:
         logging.warning("Exception: %s", e)
         title = None
