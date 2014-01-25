@@ -116,11 +116,18 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     cursor = db.cursor()
     cursor.execute('SELECT twitter_id FROM tokens')
     for row in cursor.fetchall():
+      print row
 
 
 
     db.close()
 
+
+application = webapp2.WSGIApplication([('/', MainPage),
+                ('/sign', Guestbook),
+                ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
+                ('/(.+)', GetUserURLsHandler)],
+                debug=True)
 
 
 def main():
