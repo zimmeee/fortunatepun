@@ -53,13 +53,13 @@
         <p>See the most popular URLs from your tweeps in the last 24 hours!</p>
       </div>
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-12">
           <div class="list-group">
             <a href="#" class="list-group-item active">
               URLs
             </a>
             {% for url in urllist %}
-                <a href="{{ url['url'] }}" target="_blank" class="list-group-item">{{ url['votes'] }} | {{ url['url'] }}</a>
+                <a href="{{ url['url'] }}" target="_blank" class="list-group-item">{{ url['title'] }} | {{ url['url'] }}</a>
             {% endfor %}
           </div>
         </div><!-- /.col-sm-4 -->
