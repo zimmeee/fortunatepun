@@ -133,7 +133,18 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
 class URLExpanderHandler(webapp2.RequestHandler):
 
-  def clean_urlfetch_result(self, result, cursor, row):
+  def clean_urlfetch_result(self, result, row):
+    if (os.getenv('SERVER_SOFTWARE') and
+        os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+        db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='fortunatepun', user='root')
+    else:
+        # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+        # Alternately, connect to a Google Cloud SQL instance using:
+        db = MySQLdb.connect(host='173.194.109.208', port=3306, db='fortunatepun', 
+                             user='root', passwd='thatspunny' )
+
+    cursor = db.cursor()
+
 
     try:
       logging.info("result: %s", dir(result))
@@ -152,11 +163,15 @@ class URLExpanderHandler(webapp2.RequestHandler):
       except Exception as e:
         logging.warning("Exception: %s", e)
         title = None
+
       if expanded_url and title:
         cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
 
       elif expanded_url:
         cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
+
+      db.commit()
+      db.close()
 
     except Exception as e:
       logging.error("e: %s", e)
@@ -180,7 +195,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         logging.info( 'row: %s', row )
         result = urlfetch.fetch(row[1])
         if result.status_code == 200:
-          self.clean_urlfetch_result(result, cursor, row)
+          self.clean_urlfetch_result(result, row)
         else:
           logging.error("Problem with row: %s", row)
       except Exception as e:
