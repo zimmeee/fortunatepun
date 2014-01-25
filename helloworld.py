@@ -9,7 +9,7 @@ import jinja2
 
 import logging
 
-import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 
 
 
@@ -143,6 +143,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
       except:
         pass
       logging.info("expanded_url: %s", expanded_url)
+      logging.info("result.content: %s", result.content)
 
       soup = BeautifulSoup(result.content)
       logging.info("soup: %s", soup)
