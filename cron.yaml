@@ -5,5 +5,5 @@ cron:
 
 - description: Find all the urls without a XXX field.
   url: /tasks/urlexpander
-  schedule: every 1 minute
+  schedule: every 1 minutes
 
