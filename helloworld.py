@@ -24,31 +24,10 @@ _INSTANCE_NAME = 'fortunatepun:datastore'
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        logging.info("request!")
-        # Display existing guestbook entries and a form to add new entries.
-        if (os.getenv('SERVER_SOFTWARE') and
-            os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
-            db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='guestbook', user='root')
-        else:
-            # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
-            # Alternately, connect to a Google Cloud SQL instance using:
-            db = MySQLdb.connect(host='173.194.109.208', port=3306, db='guestbook', user='root', passwd='thatspunny' )
+        logging.info("HOMEPAGE request!")
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.write('FORTUNATE PUN!!!!!!!!!!!!!!!!!!!!!')
 
-        cursor = db.cursor()
-        cursor.execute('SELECT guestName, content, entryID FROM entries')
-
-        # Create a list of guestbook entries to render with the HTML.
-        guestlist = [];
-        for row in cursor.fetchall():
-          guestlist.append(dict([('name',cgi.escape(row[0])),
-                                 ('message',cgi.escape(row[1])),
-                                 ('ID',row[2])
-                                 ]))
-
-        variables = {'guestlist': guestlist}
-        template = JINJA_ENVIRONMENT.get_template('main.html')
-        self.response.write(template.render(variables))
-        db.close()
 
 class Guestbook(webapp2.RequestHandler):
     def post(self):
@@ -202,8 +181,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
         logging.error("e: %s", e)
 
     db.close()
-
-
 
 
 application = webapp2.WSGIApplication([('/', MainPage),
