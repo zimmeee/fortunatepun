@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS URLer;
 CREATE TABLE URLer(
    urlid			INT NOT NULL,
    twitter_handle 	VARCHAR(16) NOT NULL,
-   time 			DATE
+   time 			DATETIME
 );
 
 DROP TABLE IF EXISTS URL;
