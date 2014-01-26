@@ -182,6 +182,29 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     return
 
+  def mark_bad_row(self, row):
+    if (os.getenv('SERVER_SOFTWARE') and
+        os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+        db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='fortunatepun', user='root')
+    else:
+        # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+        # Alternately, connect to a Google Cloud SQL instance using:
+        db = MySQLdb.connect(host='173.194.109.208', port=3306, db='fortunatepun', 
+                             user='root', passwd='thatspunny' )
+
+    cursor = db.cursor()
+
+    try:
+      logging.info("row: %s", dir(row))
+      cursor.execute('''UPDATE URL SET unexpandable={0} WHERE urlid = {1}'''.format(1, row[0]))      
+      db.commit()
+      db.close()
+    except Exception as e:
+      logging.error("e: %s", e)
+
+    return
+
+
   def get(self):
     if (os.getenv('SERVER_SOFTWARE') and
         os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
@@ -193,7 +216,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT * from URL WHERE expanded_url is NULL')
+    cursor.execute('SELECT * from URL WHERE expanded_url is NULL AND unexpandable = 0')
     for row in cursor.fetchall():
       try:
         logging.info( 'row: %s', row )
@@ -202,6 +225,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
           self.clean_urlfetch_result(result, row)
         else:
           logging.error("Problem with row: %s", row)
+          self.mark_bad_row(row)
+
       except Exception as e:
         logging.error("e: %s", e)
 
