@@ -271,16 +271,20 @@ class URLExpanderHandler(webapp2.RequestHandler):
           if not cleaned:
             bad_rows.append(row)
         else:
-          logging.error("Problem with row: %s", row)
-          self.mark_bad_row(row)
+          logging.warning("Problem with row. Will mark bad. Row: %s", row)
+          bad_rows.append(row)
 
       except Exception as e:
-        logging.error("e: %s", e)
-
-    for bad in bad_rows:
-      self.mark_bad_row(bad)
+        logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
+        bad_rows.append(row)
 
     db.close()
+
+    for bad in bad_rows:
+      try:
+        self.mark_bad_row(bad)
+      except Exception as e:
+        logging.error("e: %s", e)
 
 
 application = webapp2.WSGIApplication([('/', MainPage),
