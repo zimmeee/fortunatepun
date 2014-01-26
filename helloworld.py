@@ -163,8 +163,8 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
     consumer_key = '4w0zWZKRqt8vQJbmYfeQ'
     consumer_secret = 'NS6ZcUKGaaQx9k3lQekxzHQp7e6vZrnVf3OFas'
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    key = ''
-    secret = '' 
+    key = '2311401133-C5mKacui80u9QOmIeIFa8FoCmr7cWwVnthZMYgH'
+    secret = 'eXUpfDg4iMtVFlR9hE4Tlvp48aY7u7noHxKmfRzGam03y'
     auth.set_access_token(key, secret)
 
     api = tweepy.API(auth)

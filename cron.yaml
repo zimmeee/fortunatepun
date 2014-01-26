@@ -9,4 +9,4 @@ cron:
 
 - description: Tweet the top link in the database for this hour
   url: /tasks/tweettoplink
-  schedule: every 60 minutes
+  schedule: every 10 minutes
