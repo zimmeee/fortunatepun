@@ -3,7 +3,10 @@ cron:
   url: /tasks/getalluserstweets
   schedule: every 5 minutes
 
-- description: Find all the urls without a XXX field.
+- description: Find all the urls without a URL expander field.
   url: /tasks/urlexpander
   schedule: every 1 minutes
 
+- description: Tweet the top link in the database for this hour
+  url: /tasks/tweettoplink
+  schedule: every 60 minutes

@@ -9,6 +9,8 @@ import jinja2
 
 import logging
 
+
+import tweepy
 from BeautifulSoup import BeautifulSoup
 
 
@@ -97,7 +99,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
     cursor.execute( query_string )
 
-    urllist = [];
+    urllist = []
     for row in cursor.fetchall():
       logging.info( 'row: %s', row )
 
@@ -125,6 +127,47 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
     self.response.write(template.render(variables))
     db.close()
+
+
+class HourlyTopTweetHandler(webapp2.RequestHandler):
+
+  def get(self):
+    if (os.getenv('SERVER_SOFTWARE') and
+        os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+        db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='fortunatepun', user='root')
+    else:
+        # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+        # Alternately, connect to a Google Cloud SQL instance using:
+        db = MySQLdb.connect(host='173.194.109.208', port=3306, db='fortunatepun', 
+                             user='root', passwd='thatspunny' )
+
+    cursor = db.cursor()
+    # This query is broken
+    # query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
+
+    query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 1;'''
+
+    cursor.execute( query_string )
+    db.close()
+    top_row = None
+    for row in cursor.fetchall():
+      logging.info( 'row: %s', row )
+      top_row = row
+
+    title = top_row[3]
+    if not top_row[3]:
+      title = top_row[2]
+
+    consumer_key = '4w0zWZKRqt8vQJbmYfeQ'
+    consumer_secret = 'NS6ZcUKGaaQx9k3lQekxzHQp7e6vZrnVf3OFas'
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    key = ''
+    secret = '' 
+    auth.set_access_token(key, secret)
+
+    api = tweepy.API(auth)
+    new_tweet = 'Top URL is: ' + title
+    api.update_status(new_tweet)
 
 
 class URLExpanderHandler(webapp2.RequestHandler):
@@ -237,6 +280,7 @@ application = webapp2.WSGIApplication([('/', MainPage),
                 ('/sign', Guestbook),
                 ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
                 ('/tasks/urlexpander', URLExpanderHandler),
+                ('/tasks/tweettoplink', HourlyTopTweetHandler),
                 ('/t/(.+)', GetUserURLsHandler)],
                 debug=True)
 
