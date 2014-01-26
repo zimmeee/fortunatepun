@@ -172,6 +172,17 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
     api.update_status(new_tweet)
 
 
+class RedirectUserHandler(webapp2.RequestHandler):
+
+  def post(self):
+    redirect_str = '/'
+    twitter_handle = self.request.get('twitter_handle')
+    if twitter_handle:
+      redirect_str = '/t/' + twitter_handle
+
+    self.redirect(redirect_str)
+
+
 class URLExpanderHandler(webapp2.RequestHandler):
 
   def clean_urlfetch_result(self, result, row):
@@ -294,6 +305,7 @@ application = webapp2.WSGIApplication([('/', MainPage),
                 ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
                 ('/tasks/urlexpander', URLExpanderHandler),
                 ('/tasks/tweettoplink', HourlyTopTweetHandler),
+                ('/redirectuser', RedirectUserHandler),
                 ('/t/(.+)', GetUserURLsHandler)],
                 debug=True)
 
