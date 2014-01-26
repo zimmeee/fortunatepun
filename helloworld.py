@@ -156,9 +156,9 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
       logging.info( 'row: %s', row )
       top_row = row
 
-    title = top_row[3]
-    if not top_row[3]:
-      title = top_row[2]
+    title = top_row[2]
+    if not top_row[2]:
+      title = top_row[1]
 
     consumer_key = '4w0zWZKRqt8vQJbmYfeQ'
     consumer_secret = 'NS6ZcUKGaaQx9k3lQekxzHQp7e6vZrnVf3OFas'
