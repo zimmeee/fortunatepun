@@ -1,3 +1,6 @@
+-- twitter_id 		= the person that is using the application
+-- twitter_handle 	= person that tweeted the link
+-- tweetid 			= unique id of tweet 
 DROP TABLE IF EXISTS URLer;
 CREATE TABLE URLer(
    urlid			INT NOT NULL,
@@ -8,6 +11,9 @@ CREATE TABLE URLer(
    UNIQUE(tweetid, urlid)
 );
 
+-- t_url 			= twitter's URL
+-- url 				= twitter's expanded URL
+-- expanded_url 	= Fortunate Pun's expanded URL
 DROP TABLE IF EXISTS URL;
 CREATE TABLE URL(
 	urlid			INT NOT NULL AUTO_INCREMENT,
@@ -15,7 +21,7 @@ CREATE TABLE URL(
 	url				VARCHAR(2000),
 	expanded_url	VARCHAR(2000),
 	title 			TEXT,
-	unexpandable 	BOOLEAN not null default 0
+	unexpandable 	BOOLEAN not null default 0,
 	PRIMARY KEY ( urlid )
 );
 
@@ -29,16 +35,16 @@ CREATE TABLE tokens(
 );
 
 
-INSERT INTO URLer VALUES(1,789, 'zimmeee', 1, NOW() );
-INSERT INTO URLer VALUES(1,789, 'rbruggner', 2, NOW() );
-INSERT INTO URLer VALUES(1,789, 'wasauce', 3, NOW() );
+-- INSERT INTO URLer VALUES(1,789, 'zimmeee', 1, NOW() );
+-- INSERT INTO URLer VALUES(1,789, 'rbruggner', 2, NOW() );
+-- INSERT INTO URLer VALUES(1,789, 'wasauce', 3, NOW() );
 
-INSERT INTO URLer VALUES(3,789, 'zimmeee', 4, NOW() );
-INSERT INTO URLer VALUES(2,789, 'rbruggner', 5, NOW() );
-INSERT INTO URLer VALUES(3,789, 'wasauce', 6, NOW() );
+-- INSERT INTO URLer VALUES(3,789, 'zimmeee', 4, NOW() );
+-- INSERT INTO URLer VALUES(2,789, 'rbruggner', 5, NOW() );
+-- INSERT INTO URLer VALUES(3,789, 'wasauce', 6, NOW() );
 
-INSERT INTO URL VALUES(1,'a.co', 'http://www.twitter.com', 'http://www.twitter.com/bonertown', 'Exciting Boner article' );
-INSERT INTO URL VALUES(2,'b.co', 'http://www.kyron.com', 'http://www.kyron.com/bonertown', 'Less exciting boner article' );
-INSERT INTO URL VALUES(3,'c.co', 'http://www.nytimes.com', 'http://www.nytimes.com/bonertown', 'Least important boner article' );
-INSERT INTO URL VALUES(4,'c.co', 'http://www.nytimes.com', NULL, NULL );
+-- INSERT INTO URL VALUES(1,'a.co', 'http://www.twitter.com', 'http://www.twitter.com/bonertown', 'Exciting Boner article' );
+-- INSERT INTO URL VALUES(2,'b.co', 'http://www.kyron.com', 'http://www.kyron.com/bonertown', 'Less exciting boner article' );
+-- INSERT INTO URL VALUES(3,'c.co', 'http://www.nytimes.com', 'http://www.nytimes.com/bonertown', 'Least important boner article' );
+-- INSERT INTO URL VALUES(4,'c.co', 'http://www.nytimes.com', NULL, NULL );
 

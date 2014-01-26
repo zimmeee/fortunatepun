@@ -27,8 +27,9 @@ _INSTANCE_NAME = 'fortunatepun:datastore'
 class MainPage(webapp2.RequestHandler):
     def get(self):
         logging.info("HOMEPAGE request!")
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('FORTUNATE PUN!!!!!!!!!!!!!!!!!!!!!')
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+
+        self.response.write(template.render())
 
 
 class Guestbook(webapp2.RequestHandler):
@@ -113,7 +114,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                           ('title', title ),
                           ('tweeters', row[4])
                              ])
-      
+
       logging.info("dict:%s", temp_dict)
       urllist.append(temp_dict)
 
