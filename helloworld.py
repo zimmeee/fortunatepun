@@ -72,7 +72,7 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
     cursor.execute('SELECT twitter_id, twitter_handle, oauth_token, oauth_token_secret FROM tokens;')
     for row in cursor.fetchall():
       logging.info("token row: %s", row)
-      url = "http://fortunatepun.appspot.com/eatTweets?twitterId=" + str(row[0])
+      url = "http://fortunatepun.appspot.com/enqueueTweets?twitterId=" + str(row[0])
       result = urlfetch.fetch(url)
 
     self.response.write("""<html><body>All Good</body></html>""")
@@ -168,7 +168,7 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
     auth.set_access_token(key, secret)
 
     api = tweepy.API(auth)
-    new_tweet = 'Top URL is: ' + title
+    new_tweet = 'Top URL: ' + top_row[1] + ' ' + title
     api.update_status(new_tweet)
 
 
