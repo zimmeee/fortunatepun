@@ -222,8 +222,9 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     except Exception as e:
       logging.error("e: %s", e)
+      return False
 
-    return
+    return True
 
   def mark_bad_row(self, row):
     if (os.getenv('SERVER_SOFTWARE') and
@@ -260,18 +261,24 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
     cursor.execute('SELECT * from URL WHERE expanded_url is NULL AND unexpandable = 0')
+    bad_rows = []
     for row in cursor.fetchall():
       try:
         logging.info( 'row: %s', row )
         result = urlfetch.fetch(row[1])
         if result.status_code == 200:
-          self.clean_urlfetch_result(result, row)
+          cleaned = self.clean_urlfetch_result(result, row)
+          if not cleaned:
+            bad_rows.append(row)
         else:
           logging.error("Problem with row: %s", row)
           self.mark_bad_row(row)
 
       except Exception as e:
         logging.error("e: %s", e)
+
+    for bad in bad_rows:
+      self.mark_bad_row(bad)
 
     db.close()
 
