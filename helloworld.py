@@ -71,6 +71,7 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
     cursor = db.cursor()
     cursor.execute('SELECT twitter_id FROM tokens;')
     for row in cursor.fetchall():
+      logging.info("token row: %s", row)
       url = "http://fortunatepun.appspot.com/eatTweets?twitterId=" + str(row[0])
       result = urlfetch.fetch(url)
 
