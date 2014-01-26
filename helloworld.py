@@ -90,7 +90,10 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
+    # This query is broken
+    # query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
+
+    query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 20;'''.format(twitter_handle)
 
     cursor.execute( query_string )
 
@@ -98,25 +101,26 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     for row in cursor.fetchall():
       logging.info( 'row: %s', row )
 
-      title = row[4]
-      if not row[4]:
-        title = row[3]
+      title = row[3]
+      if not row[3]:
+        title = row[2]
 
-      temp_dict = dict([ ('urlid', row[0] ),
-                            ('url',   row[1] ),
-                            ('votes', row[2] ),
-                            ('title', title ),
+      temp_dict = dict([  ('urlid', row[0] ),
+                          ('url',   row[1] ),
+                          ('votes', row[2] ),
+                          ('title', title ),
+                          ('tweeters', row[4])
                              ])
+      
       logging.info("dict:%s", temp_dict)
       urllist.append(temp_dict)
-
 
     if not urllist:
       variables = { 'twitter_handle': twitter_handle }
       template = JINJA_ENVIRONMENT.get_template('nourls.html')
     else:
       variables = { 'urllist': urllist,
-                  'twitter_handle': twitter_handle }
+                    'twitter_handle': twitter_handle }
       template = JINJA_ENVIRONMENT.get_template('urls.html')
 
     self.response.write(template.render(variables))

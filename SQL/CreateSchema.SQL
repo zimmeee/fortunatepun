@@ -15,6 +15,7 @@ CREATE TABLE URL(
 	url				VARCHAR(2000),
 	expanded_url	VARCHAR(2000),
 	title 			TEXT,
+	unexpandable 	BOOLEAN not null default 0
 	PRIMARY KEY ( urlid )
 );
 
