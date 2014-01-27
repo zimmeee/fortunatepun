@@ -202,6 +202,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
       expanded_url = row[1] # the url
       try:
         expanded_url = result.final_url
+        if '.pdf' in expanded_url:
+          return False
       except:
         pass
       logging.info("expanded_url: %s", expanded_url)
@@ -278,6 +280,10 @@ class URLExpanderHandler(webapp2.RequestHandler):
     for row in cursor.fetchall():
       try:
         logging.info( 'row: %s', row )
+        if '.pdf' in row[2]:
+          bad_rows.append(row)
+          continue
+
         result = urlfetch.fetch(row[1])
         if result.status_code == 200:
           cleaned = self.clean_urlfetch_result(result, row)
