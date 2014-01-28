@@ -12,3 +12,37 @@ body {
 .theme-showcase > p > .btn {
   margin: 5px 0;
 }
+
+.jumbotron-short {
+  padding: 10px;
+  margin-bottom: 30px;
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 2.1428571435;
+  color: inherit;
+  background-color: #D1DBBD;
+}
+
+.navbar-whale {
+  background-color: #3E606F;
+  border-color: #080808;
+}
+
+.navbar-text {
+  float: left;
+  font-size: 18px;
+  line-height: 20px;
+  color: #dddddd;
+}
+
+a.list-group-item.whale,
+a.list-group-item.whale:hover,
+a.list-group-item.whale:focus {
+  z-index: 2;
+  color: #eeeeee;
+  background-color: #3E606F;
+  border-color: #3E606F;
+}
+
+
+

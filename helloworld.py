@@ -96,23 +96,31 @@ class GetUserURLsHandler(webapp2.RequestHandler):
     # This query is broken
     # query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
 
-    query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 20;'''.format(twitter_handle)
+    # query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 20;'''.format(twitter_handle)
 
-    cursor.execute( query_string )
+    sql = ('SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters  '
+           'FROM URLer JOIN URL USING(urlid) '
+           'WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = \'{0}\') '
+           'AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time '
+           'AND expanded_url IS NOT NULL '
+           'GROUP BY expanded_url, title ORDER BY count(DISTINCT(twitter_handle)) DESC LIMIT 50;' ).format( twitter_handle )
+
+    logging.info( sql )
+
+    cursor.execute( sql )
 
     urllist = []
     for row in cursor.fetchall():
       logging.info( 'row: %s', row )
 
-      title = row[3]
-      if not row[3]:
-        title = row[2]
+      title = row[1]
+      if not row[1]:
+        title = row[0]
 
-      temp_dict = dict([  ('urlid', row[0] ),
-                          ('url',   row[1] ),
+      temp_dict = dict([  ('url',   row[0] ),
                           ('votes', row[2] ),
                           ('title', title ),
-                          ('tweeters', row[4])
+                          ('tweeters', row[3])
                              ])
 
       logging.info("dict:%s", temp_dict)

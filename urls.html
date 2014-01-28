@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="/static/favicon.ico">
 
-    <title>Fortunate Pun(t)</title>
+    <title>Last Whale Standing</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/bootstrap.css" rel="stylesheet">
@@ -31,16 +31,10 @@
   <body>
 
     <!-- Fixed navbar -->
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-whale navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Fortunate Punt</a>
+          <a class="navbar-text" href="http://www.lastwhalestanding.com">Last Whale Standing</a>
         </div>
       </div>
     </div>
@@ -48,18 +42,18 @@
     <div class="container theme-showcase">
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
+      <div class="jumbotron jumbotron-short">
         <h1>Hello, {{ twitter_handle }}</h1>
         <p>See the most popular URLs from your tweeps in the last 24 hours!</p>
       </div>
       <div class="row">
         <div class="col-sm-12">
           <div class="list-group">
-            <a href="#" class="list-group-item active">
-              URLs
+            <a href="#" class="list-group-item whale">
+              <h4>Whale, here's your news...</h4>
             </a>
             {% for url in urllist %}
-                <a href="{{ url['url'] }}" target="_blank" class="list-group-item">{{ url['votes'] }} | {{ url['title'] }}</a>
+                <a href="{{ url['url'] }}" target="_blank" class="list-group-item">{{ url['votes'] }} | {{ url['title'] }} | {{ url['tweeters'] }}</a>
             {% endfor %}
           </div>
         </div><!-- /.col-sm-4 -->
