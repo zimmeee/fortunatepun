@@ -69,9 +69,10 @@ class GetAllUsersTweetsHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    cursor.execute('SELECT twitter_id FROM tokens;')
+    cursor.execute('SELECT twitter_id, twitter_handle, oauth_token, oauth_token_secret FROM tokens;')
     for row in cursor.fetchall():
-      url = "http://fortunatepun.appspot.com/eatTweets?twitterId=" + str(row[0])
+      logging.info("token row: %s", row)
+      url = "http://fortunatepun.appspot.com/enqueueTweets?twitterId=" + str(row[0])
       result = urlfetch.fetch(url)
 
     self.response.write("""<html><body>All Good</body></html>""")
@@ -163,20 +164,31 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
       logging.info( 'row: %s', row )
       top_row = row
 
-    title = top_row[3]
-    if not top_row[3]:
-      title = top_row[2]
+    title = top_row[2]
+    if not top_row[2]:
+      title = top_row[1]
 
     consumer_key = '4w0zWZKRqt8vQJbmYfeQ'
     consumer_secret = 'NS6ZcUKGaaQx9k3lQekxzHQp7e6vZrnVf3OFas'
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    key = ''
-    secret = '' 
+    key = '2311401133-C5mKacui80u9QOmIeIFa8FoCmr7cWwVnthZMYgH'
+    secret = 'eXUpfDg4iMtVFlR9hE4Tlvp48aY7u7noHxKmfRzGam03y'
     auth.set_access_token(key, secret)
 
     api = tweepy.API(auth)
-    new_tweet = 'Top URL is: ' + title
+    new_tweet = 'Top URL: ' + top_row[1] + ' ' + title
     api.update_status(new_tweet)
+
+
+class RedirectUserHandler(webapp2.RequestHandler):
+
+  def post(self):
+    redirect_str = '/'
+    twitter_handle = self.request.get('twitter_handle')
+    if twitter_handle:
+      redirect_str = '/t/' + twitter_handle
+
+    self.redirect(redirect_str)
 
 
 class URLExpanderHandler(webapp2.RequestHandler):
@@ -198,6 +210,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
       expanded_url = row[1] # the url
       try:
         expanded_url = result.final_url
+        if '.pdf' in expanded_url:
+          return False
       except:
         pass
       logging.info("expanded_url: %s", expanded_url)
@@ -274,6 +288,10 @@ class URLExpanderHandler(webapp2.RequestHandler):
     for row in cursor.fetchall():
       try:
         logging.info( 'row: %s', row )
+        if '.pdf' in row[2]:
+          bad_rows.append(row)
+          continue
+
         result = urlfetch.fetch(row[1])
         if result.status_code == 200:
           cleaned = self.clean_urlfetch_result(result, row)
@@ -301,6 +319,7 @@ application = webapp2.WSGIApplication([('/', MainPage),
                 ('/tasks/getalluserstweets', GetAllUsersTweetsHandler),
                 ('/tasks/urlexpander', URLExpanderHandler),
                 ('/tasks/tweettoplink', HourlyTopTweetHandler),
+                ('/redirectuser', RedirectUserHandler),
                 ('/t/(.+)', GetUserURLsHandler)],
                 debug=True)
 

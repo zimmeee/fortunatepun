@@ -37,9 +37,9 @@
     <center>
       <img src="/static/whale.png" width="30%">  
     </center>
-      <form class="form-signin" role="form">
-        <input type="text" class="form-control" placeholder="Twitter handle" required autofocus>
-        <!-- <button class="btn btn-lg btn-primary btn-block" type="submit">Feed Me</button> -->
+      <form class="form-signin" role="form" action="/redirectuser" method="post">
+        <h2 class="form-signin-heading">Get my feed</h2>
+        <input name="twitter_handle" type="text" class="form-control" placeholder="Twitter handle" required autofocus>
         <button class="btn btn-lg btn-custom btn-block" type="submit">Feed Me</button>
       </form>
       <hr>
