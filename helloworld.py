@@ -211,7 +211,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
       expanded_url = row[1] # the url
       try:
         expanded_url = result.final_url
-        for bad_end in ['.pdf', '.gif']
+        for bad_end in ['.pdf', '.gif']:
           if bad_end in expanded_url:
             return False
       except:
@@ -292,6 +292,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         if '.pdf' in row[2]:
           bad_rows.append(row)
           continue
+
         if '.gif' in row[2]:
           bad_rows.append(row)
           continue
