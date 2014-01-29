@@ -210,8 +210,9 @@ class URLExpanderHandler(webapp2.RequestHandler):
       expanded_url = row[1] # the url
       try:
         expanded_url = result.final_url
-        if '.pdf' in expanded_url:
-          return False
+        for bad_end in ['.pdf', '.gif']
+          if bad_end in expanded_url:
+            return False
       except:
         pass
       logging.info("expanded_url: %s", expanded_url)
@@ -289,6 +290,9 @@ class URLExpanderHandler(webapp2.RequestHandler):
       try:
         logging.info( 'row: %s', row )
         if '.pdf' in row[2]:
+          bad_rows.append(row)
+          continue
+        if '.gif' in row[2]:
           bad_rows.append(row)
           continue
 
