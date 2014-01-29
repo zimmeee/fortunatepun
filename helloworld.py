@@ -205,8 +205,9 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
 
+    logging.info("row: %s", row)
+
     try:
-      logging.info("result: %s", dir(result))
       expanded_url = row[1] # the url
       try:
         expanded_url = result.final_url
@@ -216,8 +217,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
       except:
         pass
       logging.info("expanded_url: %s", expanded_url)
-      logging.info("result.content: %s", result.content)
-
       try:
         soup = BeautifulSoup(result.content)
         title = soup.title.string
@@ -287,6 +286,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
     cursor.execute('SELECT * from URL WHERE expanded_url is NULL AND unexpandable = 0')
     bad_rows = []
     for row in cursor.fetchall():
+      result = None
       try:
         logging.info( 'row: %s', row )
         if '.pdf' in row[2]:
