@@ -1,5 +1,6 @@
 import cgi
 import webapp2
+import urllib2
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
 
@@ -297,14 +298,18 @@ class URLExpanderHandler(webapp2.RequestHandler):
           bad_rows.append(row)
           continue
 
-        result = urlfetch.fetch(row[1])
-        if result.status_code == 200:
-          cleaned = self.clean_urlfetch_result(result, row)
-          if not cleaned:
+        try:
+          result = urllib2.urlopen(row[1])
+          if result.status_code == 200:
+            cleaned = self.clean_urlfetch_result(result, row)
+            if not cleaned:
+              bad_rows.append(row)
+          else:
+            logging.warning("Problem with row. Will mark bad. Row: %s", row)
             bad_rows.append(row)
-        else:
-          logging.warning("Problem with row. Will mark bad. Row: %s", row)
-          bad_rows.append(row)
+        except Exception as e:
+            logging.warning("Bad row: %s. e:%s", row, e)
+            bad_rows.append(row)
 
       except Exception as e:
         logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
