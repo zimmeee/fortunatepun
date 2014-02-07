@@ -95,11 +95,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    # This query is broken
-    # query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
-
-    # query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 20;'''.format(twitter_handle)
-
+    # This query is very inefficient (~17s to run with a small amount of data)
     sql = ('SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters  '
            'FROM URLer JOIN URL USING(urlid) '
            'WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = \'{0}\') '
@@ -107,7 +103,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
            'AND expanded_url IS NOT NULL '
            'GROUP BY expanded_url, title ORDER BY count(DISTINCT(twitter_handle)) DESC LIMIT 50;' ).format( twitter_handle )
 
-    logging.info( sql )
+    # logging.info( sql )
 
     cursor.execute( sql )
 

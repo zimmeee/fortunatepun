@@ -34,6 +34,9 @@ CREATE TABLE tokens(
 	UNIQUE( twitter_id, oauth_token )
 );
 
+ALTER TABLE URLer ADD INDEX (twitter_id);
+ALTER TABLE URLer ADD INDEX (twitter_handle);
+
 
 -- INSERT INTO URLer VALUES(1,789, 'zimmeee', 1, NOW() );
 -- INSERT INTO URLer VALUES(1,789, 'rbruggner', 2, NOW() );
