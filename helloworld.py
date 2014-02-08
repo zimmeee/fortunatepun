@@ -261,7 +261,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
     cursor = db.cursor()
 
     try:
-      logging.info("row: %s", dir(row))
+      logging.warning("bad row: %s", dir(row))
       cursor.execute('''UPDATE URL SET unexpandable={0} WHERE urlid = {1}'''.format(1, row[0]))      
       db.commit()
       db.close()
