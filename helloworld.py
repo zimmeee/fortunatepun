@@ -206,11 +206,12 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     logging.info("row: %s", row)
     logging.info("result: %s", result)
+    logging.info("dir result: %s", dir(result))
 
     try:
       expanded_url = row[1] # the url
       try:
-        expanded_url = result.final_url
+        expanded_url = result.geturl()
         for bad_end in ['.pdf', '.gif']:
           if bad_end in expanded_url:
             return False
@@ -218,7 +219,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         pass
       logging.info("expanded_url: %s", expanded_url)
       try:
-        soup = BeautifulSoup(result.content)
+        soup = BeautifulSoup(result.read())
         title = soup.title.string
         logging.info("title: %s", title)
         title = cgi.escape(title)
