@@ -45,4 +45,10 @@ a.list-group-item.whale:focus {
 }
 
 
+.big-badge {
+  font-size: 18px;
+  font-weight: normal;
+  background-color: #3E606F;
+}
+
 

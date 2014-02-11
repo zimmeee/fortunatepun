@@ -42,18 +42,18 @@
     <div class="container theme-showcase">
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron jumbotron-short">
-        <h1>Hello, {{ twitter_handle }}</h1>
-        <p>See the most popular URLs from your tweeps in the last 24 hours!</p>
+      <div class="well well-lg">
+        <H1>Whale hello there, {{ twitter_handle }}</H1>
       </div>
       <div class="row">
         <div class="col-sm-12">
           <div class="list-group">
-            <a href="#" class="list-group-item whale">
-              <h4>Whale, here's your news...</h4>
-            </a>
             {% for url in urllist %}
-                <a href="{{ url['url'] }}" target="_blank" class="list-group-item">{{ url['votes'] }} | {{ url['title'] }} | {{ url['tweeters'] }}</a>
+                <a href="{{ url['url'] }}" target="_blank" class="list-group-item"> 
+                  <span class="badge big-badge">{{ url['votes'] }}</span>
+                  <h4 class="list-group-item-heading">{{ url['title'] }}</h4>
+                  <p class="list-group-item-text">{{ url['tweeters'] }}</p>
+                </a>
             {% endfor %}
           </div>
         </div><!-- /.col-sm-4 -->
