@@ -214,6 +214,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         expanded_url = result.geturl()
         for bad_end in ['.pdf', '.gif']:
           if bad_end in expanded_url:
+            logging.info("pdf or gif -- bad")
             return False
       except:
         pass
@@ -232,7 +233,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
       if expanded_url and title:
         try:
           cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
-        except:
+        except Exception as e:
+          logging.error("e: %s", e)
           fail = True
       elif expanded_url:
         cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
@@ -263,7 +265,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
     cursor = db.cursor()
 
     try:
-      logging.warning("bad row: %s", dir(row))
       cursor.execute('''UPDATE URL SET unexpandable={0} WHERE urlid = {1}'''.format(1, row[0]))      
       db.commit()
       db.close()
