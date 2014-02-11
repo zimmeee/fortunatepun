@@ -205,6 +205,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
     cursor = db.cursor()
 
     logging.info("row: %s", row)
+    logging.info("result: %s", result)
 
     try:
       expanded_url = row[1] # the url
@@ -298,10 +299,11 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
         try:
           result = urllib2.urlopen(row[1])
-          if result.status_code == 200:
-            cleaned = self.clean_urlfetch_result(result, row)
-            if not cleaned:
-              bad_rows.append(row)
+          logging.info("result: %s", result)
+          cleaned = self.clean_urlfetch_result(result, row)
+          logging.info("cleaned: %s", cleaned)
+          if not cleaned:
+            bad_rows.append(row)
           else:
             logging.warning("Problem with row. Will mark bad. Row: %s", row)
             bad_rows.append(row)
