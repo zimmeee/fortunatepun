@@ -1,3 +1,18 @@
+// Variables
+@link-color:       @gray-dark;
+@link-color-hover: darken(@link-color, 15%);
+
+// Usage
+a {
+  color: @link-color;
+  text-decoration: none;
+
+  &:hover {
+    color: @link-color-hover;
+    text-decoration: underline;
+  }
+}
+
 body {
   padding-top: 70px;
   padding-bottom: 30px;

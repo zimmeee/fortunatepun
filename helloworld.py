@@ -14,6 +14,11 @@ import logging
 import tweepy
 from BeautifulSoup import BeautifulSoup
 
+def comma_split( value ):
+  return value.split(',')
+
+def link_tweetids( tweeters, tweetids ):
+  ['|'.join( tweeters[i], tweetids[i]) for i in range(len(tweeters))]
 
 
 # Configure the Jinja2 environment.
@@ -21,6 +26,9 @@ JINJA_ENVIRONMENT = jinja2.Environment(
   loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
   autoescape=True,
   extensions=['jinja2.ext.autoescape'])
+
+JINJA_ENVIRONMENT.filters['comma_split'] = comma_split 
+JINJA_ENVIRONMENT.filters['link_tweetids'] = link_tweetids
 
 # Define your production Cloud SQL instance information.
 _INSTANCE_NAME = 'fortunatepun:datastore'
@@ -96,7 +104,7 @@ class GetUserURLsHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
 
-    sql = ('SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters '
+    sql = ('SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters, group_concat( DISTINCT tweetid ) as tweetids '
             'FROM URLer JOIN URL USING(urlid) '
             'WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = \'{0}\') '
             'AND expanded_url IS NOT NULL '
@@ -117,10 +125,17 @@ class GetUserURLsHandler(webapp2.RequestHandler):
       if not row[1]:
         title = row[0]
 
+      tweeters = row[3].split(',')
+      tweetids = row[4].split(',')
+
+      handle_to_id = [(tweeters[i], tweetids[i]) for i in range(len(tweeters))]
+
       temp_dict = dict([  ('url',   row[0] ),
                           ('votes', row[2] ),
                           ('title', title ),
-                          ('tweeters', row[3])
+                          ('tweeters', row[3]),
+                          ('tweetids', row[4]),
+                          ('handle_to_id', handle_to_id)
                              ])
 
       logging.info("dict:%s", temp_dict)

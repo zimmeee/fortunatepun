@@ -49,19 +49,22 @@
         <div class="col-sm-12">
           <div class="list-group">
             {% for url in urllist %}
-                <a href="{{ url['url'] }}" target="_blank" class="list-group-item"> 
+                <!-- <a href="{{ url['url'] }}" target="_blank" class="list-group-item"> -->
+                <div class='list-group-item'>
                   <span class="badge big-badge">{{ url['votes'] }}</span>
-                  <h4 class="list-group-item-heading">{{ url['title'] }}</h4>
-                  <p class="list-group-item-text">{{ url['tweeters'] }}</p>
-                </a>
+                  <a href="{{ url['url'] }}" target="_blank">
+                    <h4 class="list-group-item-heading">{{ url['title'] }}</h4>
+                  </a>
+          
+                  {% for t in url['handle_to_id'] %}
+                    <a href="https://twitter.com/{{t[0]}}/status/{{t[1]}}" target="_blank" class="text-muted">{{t[0]}}</a> |
+                  {% endfor %}
+                
+                </div>
+                
             {% endfor %}
           </div>
         </div><!-- /.col-sm-4 -->
-      </div>
-
-
-      <div class="well">
-        <p></p>
       </div>
 
 
