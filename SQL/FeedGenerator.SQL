@@ -3,7 +3,7 @@ SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_conc
 FROM URLer JOIN URL USING(urlid)
 WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = 'rbruggner')
 AND expanded_url IS NOT NULL
-AND tweet_time >= now() - INTERVAL 14 DAY
+AND tweet_time >= now() - INTERVAL 1 DAY
 AND twitter_handle != 'lastwhale'
 GROUP BY 1,2
 ORDER BY count(DISTINCT(twitter_handle)) DESC

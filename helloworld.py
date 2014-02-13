@@ -166,12 +166,16 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
                              user='root', passwd='thatspunny' )
 
     cursor = db.cursor()
-    # This query is broken
-    # query_string = '''SELECT urlid, url, count(*) as votes, expanded_url, title FROM URLer JOIN URL USING(urlid) WHERE twitter_id = (select twitter_id FROM tokens WHERE twitter_handle = '{0}') AND DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, url, expanded_url, title ORDER BY count(*) DESC;'''.format(twitter_handle)
+ 
+    sql = ( 'SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters '
+            'FROM URLer JOIN URL USING(urlid) '
+            'WHERE expanded_url IS NOT NULL '
+            'AND tweet_time >= now() - INTERVAL 1 DAY '
+            'AND twitter_handle != \'lastwhale\' '
+            'GROUP BY 1,2 '
+            'ORDER BY count(DISTINCT(twitter_handle)) DESC LIMIT 1;' )
 
-    query_string = '''SELECT urlid, expanded_url, title, count(*) as votes, group_concat( DISTINCT twitter_handle ) as tweeters FROM URLer JOIN URL USING(urlid) WHERE DATE_SUB( tweet_time, INTERVAL 1 DAY) < tweet_time AND expanded_url IS NOT NULL GROUP BY urlid, expanded_url, title ORDER BY count(*) DESC LIMIT 1;'''
-
-    cursor.execute( query_string )
+    cursor.execute( sql )
     db.close()
     top_row = None
     for row in cursor.fetchall():
