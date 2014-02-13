@@ -36,13 +36,14 @@
     <div class="container">
     <center>
       <img src="/static/whale.png" width="30%">  
-    </center>
       <form class="form-signin" role="form" action="/redirectuser" method="post">
         <input name="twitter_handle" type="text" class="form-control" placeholder="Twitter handle" required autofocus>
         <button class="btn btn-lg btn-custom btn-block" type="submit">Feed Me</button>
       </form>
+      {% for handle in top_twatters %}
+        <a href="http://www.lastwhalestanding.com/t/{{handle}}" class="text-muted">{{handle}}</a> | 
+      {% endfor %}
       <hr>
-      <center>
         <a href="http://fortunatepun.appspot.com/signin">
           <h2 class="signup-text">
             Dive in<br>

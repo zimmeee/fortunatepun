@@ -36,9 +36,28 @@ _INSTANCE_NAME = 'fortunatepun:datastore'
 class MainPage(webapp2.RequestHandler):
     def get(self):
         logging.info("HOMEPAGE request!")
-        template = JINJA_ENVIRONMENT.get_template('index.html')
 
-        self.response.write(template.render())
+        if (os.getenv('SERVER_SOFTWARE') and
+            os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
+            db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='fortunatepun', user='root')
+        else:
+            # db = MySQLdb.connect(host='127.0.0.1', port=3306, user='root')
+            # Alternately, connect to a Google Cloud SQL instance using:
+            db = MySQLdb.connect(host='173.194.109.208', port=3306, db='fortunatepun', 
+                                 user='root', passwd='thatspunny' )
+
+        cursor = db.cursor()
+
+        cursor.execute('SELECT twitter_id, tokens.twitter_handle, count(urlid) FROM URLer join tokens using(twitter_id) GROUP BY 1, 2 ORDER BY 3 desc;')
+
+        top_twatters = []
+        for row in cursor.fetchall():
+          top_twatters.append( row[1] )
+
+        db.close()
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render({ 'top_twatters': top_twatters }))
 
 
 class Guestbook(webapp2.RequestHandler):
@@ -128,6 +147,8 @@ class GetUserURLsHandler(webapp2.RequestHandler):
       tweeters = row[3].split(',')
       tweetids = row[4].split(',')
 
+      # This isn't quite right. There could be more tweetids than tweeters
+      # But it works most of the time
       handle_to_id = [(tweeters[i], tweetids[i]) for i in range(len(tweeters))]
 
       temp_dict = dict([  ('url',   row[0] ),
