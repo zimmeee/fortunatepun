@@ -48,7 +48,7 @@ class MainPage(webapp2.RequestHandler):
 
         cursor = db.cursor()
 
-        cursor.execute('SELECT twitter_id, tokens.twitter_handle, count(urlid) FROM URLer join tokens using(twitter_id) GROUP BY 1, 2 ORDER BY 3 desc;')
+        cursor.execute('SELECT twitter_id, tokens.twitter_handle, count(urlid) FROM URLer join tokens using(twitter_id) GROUP BY 1, 2 ORDER BY 3 desc LIMIT 5;')
 
         top_twatters = []
         for row in cursor.fetchall():
@@ -188,7 +188,7 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
  
-    sql = ( 'SELECT expanded_url, title, count(DISTINCT(twitter_handle)) as votes, group_concat( DISTINCT twitter_handle ) as tweeters '
+    sql = ( 'SELECT expanded_url, title, group_concat( DISTINCT twitter_handle ) as tweeters '
             'FROM URLer JOIN URL USING(urlid) '
             'WHERE expanded_url IS NOT NULL '
             'AND tweet_time >= now() - INTERVAL 1 DAY '
