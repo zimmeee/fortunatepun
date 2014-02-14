@@ -200,7 +200,7 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
     db.close()
     top_row = None
     for row in cursor.fetchall():
-      logging.info( 'row: %s', row )
+      logging.info( 'HourlyTopTweetHandler: %s', row )
       top_row = row
 
     title = top_row[2]
