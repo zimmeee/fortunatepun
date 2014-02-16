@@ -216,6 +216,9 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
 
     api = tweepy.API(auth)
     new_tweet = 'Top URL: ' + top_row[1] + ' ' + title
+    if len(new_tweet) > 140:
+      new_tweet = new_tweet[:135] + '...'
+
     api.update_status(new_tweet)
 
 
