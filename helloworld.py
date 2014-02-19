@@ -203,9 +203,9 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
       logging.info( 'HourlyTopTweetHandler: %s', row )
       top_row = row
 
-    title = top_row[2]
-    if not top_row[2]:
-      title = top_row[1]
+    title = top_row[1]
+    if not top_row[1]:
+      title = top_row[0]
 
     consumer_key = '4w0zWZKRqt8vQJbmYfeQ'
     consumer_secret = 'NS6ZcUKGaaQx9k3lQekxzHQp7e6vZrnVf3OFas'
@@ -215,9 +215,11 @@ class HourlyTopTweetHandler(webapp2.RequestHandler):
     auth.set_access_token(key, secret)
 
     api = tweepy.API(auth)
-    new_tweet = 'Top URL: ' + top_row[1] + ' ' + title
-    if len(new_tweet) > 140:
-      new_tweet = new_tweet[:135] + '...'
+    new_tweet = 'Top URL: ' + title
+    if len(new_tweet) > 115:
+      new_tweet = new_tweet[:115] + '...'
+
+    new_tweet = new_tweet + ' ' + top_row[0]
 
     api.update_status(new_tweet)
 
