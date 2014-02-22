@@ -318,6 +318,29 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     return
 
+  def is_bad_from_headers(self, row):
+    bad_content_types = [
+      'video/mp4',
+      'image/gif',
+      'application/pdf',
+      'image/jpeg',
+      'image/jpeg',
+      'audio/mpeg',
+    ]
+    try:
+      request = urllib2.Request(url)
+      request.get_method = lambda : 'HEAD'
+      response = urllib2.urlopen(request)
+      content_type = response.info().getheaders("Content-Type")
+      logging.info("info: %s", response.info())
+      for item in bad_content_types:
+        if item in content_type:
+          return True
+    except:
+      pass
+
+    return False
+
 
   def get(self):
     if (os.getenv('SERVER_SOFTWARE') and
@@ -341,6 +364,11 @@ class URLExpanderHandler(webapp2.RequestHandler):
           continue
 
         if '.gif' in row[2]:
+          bad_rows.append(row)
+          continue
+
+        is_bad = self.is_bad_from_headers(row)
+        if is_bad:
           bad_rows.append(row)
           continue
 
