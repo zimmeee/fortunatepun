@@ -278,11 +278,13 @@ class URLExpanderHandler(webapp2.RequestHandler):
       if expanded_url and title:
         try:
           cursor.execute('''UPDATE URL SET expanded_url='{0}', title='{1}' WHERE urlid = {2}'''.format(expanded_url, title, row[0]))
+          logging.info("Updated URL")
         except Exception as e:
           logging.error("e: %s", e)
           fail = True
       elif expanded_url:
         cursor.execute('''UPDATE URL SET expanded_url='{0}' WHERE urlid = {1}'''.format(expanded_url, row[0]))
+        logging.info("Updated URL")
 
       if fail:
         if expanded_url:
@@ -370,6 +372,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
         is_bad = self.is_bad_from_headers(row)
         if is_bad:
+          logging.info("isbad email. row: %s", row)
           bad_rows.append(row)
           continue
 
