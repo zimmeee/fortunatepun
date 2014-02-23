@@ -373,8 +373,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
           bad_rows.append(row)
           continue
 
-        continue
-
         try:
           result = urllib2.urlopen(row[1])
           logging.info("result: %s", result)
