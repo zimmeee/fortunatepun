@@ -259,7 +259,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         expanded_url = result.geturl()
         for bad_end in ['.pdf', '.gif']:
           if bad_end in expanded_url:
-            logging.info("pdf or gif -- bad")
+            logging.warning("pdf or gif -- bad")
             return False
       except:
         pass
@@ -294,7 +294,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
       db.close()
 
     except Exception as e:
-      logging.error("e: %s", e)
+      logging.error("row: %s, e: %s", row, e)
       return False
 
     return True
