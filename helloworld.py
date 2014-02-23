@@ -249,9 +249,9 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
 
-    logging.info("row: %s", row)
-    logging.info("result: %s", result)
-    logging.info("dir result: %s", dir(result))
+    # logging.info("row: %s", row)
+    # logging.info("result: %s", result)
+    # logging.info("dir result: %s", dir(result))
 
     try:
       expanded_url = row[1] # the url
@@ -263,13 +263,13 @@ class URLExpanderHandler(webapp2.RequestHandler):
             return False
       except:
         pass
-      logging.info("expanded_url: %s", expanded_url)
+      # logging.info("expanded_url: %s", expanded_url)
       try:
         soup = BeautifulSoup(result.read())
         title = soup.title.string
-        logging.info("title: %s", title)
+        # logging.info("title: %s", title)
         title = cgi.escape(title)
-        logging.info("title: %s", title)
+        # logging.info("title: %s", title)
       except Exception as e:
         logging.warning("Exception: %s", e)
         title = None
@@ -334,8 +334,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
       request.get_method = lambda : 'HEAD'
       response = urllib2.urlopen(request)
       content_type = response.info().getheaders("Content-Type")
-      logging.info("info: %s", response.info())
-      logging.info("row: %s", row)
+      # logging.info("info: %s", response.info())
+      # logging.info("row: %s", row)
       for item in bad_content_types:
         if item in content_type:
           return True
@@ -361,7 +361,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
     for row in cursor.fetchall():
       result = None
       try:
-        logging.info( 'row: %s', row )
+        # logging.info( 'row: %s', row )
         if '.pdf' in row[2]:
           bad_rows.append(row)
           continue
@@ -372,13 +372,13 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
         is_bad = self.is_bad_from_headers(row)
         if is_bad:
-          logging.info("isbad email. row: %s", row)
+          logging.info("is bad email. row: %s", row)
           bad_rows.append(row)
           continue
 
         try:
           result = urllib2.urlopen(row[1])
-          logging.info("result: %s", result)
+          # logging.info("result: %s", result)
           cleaned = self.clean_urlfetch_result(result, row)
           logging.info("cleaned: %s", cleaned)
           if not cleaned:
