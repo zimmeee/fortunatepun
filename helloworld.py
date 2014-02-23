@@ -328,16 +328,17 @@ class URLExpanderHandler(webapp2.RequestHandler):
       'audio/mpeg',
     ]
     try:
-      request = urllib2.Request(url)
+      request = urllib2.Request(row[1])
       request.get_method = lambda : 'HEAD'
       response = urllib2.urlopen(request)
       content_type = response.info().getheaders("Content-Type")
       logging.info("info: %s", response.info())
+      logging.info("row: %s", row)
       for item in bad_content_types:
         if item in content_type:
           return True
-    except:
-      pass
+    except Exception as e:
+      logging.error("e: %s", e)
 
     return False
 
@@ -371,6 +372,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
         if is_bad:
           bad_rows.append(row)
           continue
+
+        continue
 
         try:
           result = urllib2.urlopen(row[1])
