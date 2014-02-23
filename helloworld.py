@@ -338,7 +338,7 @@ class URLExpanderHandler(webapp2.RequestHandler):
         if item in content_type:
           return True
     except Exception as e:
-      logging.error("e: %s", e)
+      logging.warning("e: %s", e)
 
     return False
 
