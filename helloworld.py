@@ -163,8 +163,22 @@ class GetUserURLsHandler(webapp2.RequestHandler):
       urllist.append(temp_dict)
 
     if not urllist:
-      variables = { 'twitter_handle': twitter_handle }
-      template = JINJA_ENVIRONMENT.get_template('nourls.html')
+      # Check if there is a user
+      sql = ('SELECT twitter_handle FROM tokens WHERE twitter_handle = \'{0}\'').format( twitter_handle )
+
+      logging.info( sql )
+
+      cursor.execute( sql )
+      twitter_user_exists = False
+      for row in cursor.fetchall():
+        if row:
+          twitter_user_exists = True
+
+      if twitter_user_exists:
+        variables = { 'twitter_handle': twitter_handle }
+        template = JINJA_ENVIRONMENT.get_template('nourls.html')
+      else:
+        self.redirect('/')
     else:
       variables = { 'urllist': urllist,
                     'twitter_handle': twitter_handle }
@@ -249,9 +263,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
 
     cursor = db.cursor()
 
-    # logging.info("row: %s", row)
-    # logging.info("result: %s", result)
-    # logging.info("dir result: %s", dir(result))
+    logging.info("row: %s", row)
+    logging.info("result: %s", result)
 
     try:
       expanded_url = row[1] # the url
@@ -360,39 +373,40 @@ class URLExpanderHandler(webapp2.RequestHandler):
     bad_rows = []
     for row in cursor.fetchall():
       result = None
-      try:
-        # logging.info( 'row: %s', row )
-        if '.pdf' in row[2]:
-          bad_rows.append(row)
-          continue
+      logging.info("row: %s", row)
+      # try:
+      #   # logging.info( 'row: %s', row )
+      #   if '.pdf' in row[2]:
+      #     bad_rows.append(row)
+      #     continue
 
-        if '.gif' in row[2]:
-          bad_rows.append(row)
-          continue
+      #   if '.gif' in row[2]:
+      #     bad_rows.append(row)
+      #     continue
 
-        is_bad = self.is_bad_from_headers(row)
-        if is_bad:
-          logging.info("is bad email. row: %s", row)
-          bad_rows.append(row)
-          continue
+      #   is_bad = self.is_bad_from_headers(row)
+      #   if is_bad:
+      #     logging.info("is bad email. row: %s", row)
+      #     bad_rows.append(row)
+      #     continue
 
-        try:
-          result = urllib2.urlopen(row[1])
-          # logging.info("result: %s", result)
-          cleaned = self.clean_urlfetch_result(result, row)
-          logging.info("cleaned: %s", cleaned)
-          if not cleaned:
-            bad_rows.append(row)
-          else:
-            logging.warning("Problem with row. Will mark bad. Row: %s", row)
-            bad_rows.append(row)
-        except Exception as e:
-            logging.warning("Bad row: %s. e:%s", row, e)
-            bad_rows.append(row)
+      #   try:
+      #     result = urllib2.urlopen(row[1])
+      #     # logging.info("result: %s", result)
+      #     cleaned = self.clean_urlfetch_result(result, row)
+      #     logging.info("cleaned: %s", cleaned)
+      #     if not cleaned:
+      #       bad_rows.append(row)
+      #     else:
+      #       logging.warning("Problem with row. Will mark bad. Row: %s", row)
+      #       bad_rows.append(row)
+      #   except Exception as e:
+      #       logging.warning("Bad row: %s. e:%s", row, e)
+      #       bad_rows.append(row)
 
-      except Exception as e:
-        logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
-        bad_rows.append(row)
+      # except Exception as e:
+      #   logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
+      #   bad_rows.append(row)
 
     db.close()
 
