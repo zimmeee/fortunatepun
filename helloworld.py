@@ -374,42 +374,44 @@ class URLExpanderHandler(webapp2.RequestHandler):
     for row in cursor.fetchall():
       result = None
       logging.info("row: %s", row)
-      # try:
-      #   # logging.info( 'row: %s', row )
-      #   if '.pdf' in row[2]:
-      #     bad_rows.append(row)
-      #     continue
+      # mark row as unexpandable no matter what
+      self.mark_bad_row(row)
+      try:
+        # logging.info( 'row: %s', row )
+        if '.pdf' in row[2]:
+          bad_rows.append(row)
+          continue
 
-      #   if '.gif' in row[2]:
-      #     bad_rows.append(row)
-      #     continue
+        if '.gif' in row[2]:
+          bad_rows.append(row)
+          continue
 
-      #   is_bad = self.is_bad_from_headers(row)
-      #   if is_bad:
-      #     logging.info("is bad email. row: %s", row)
-      #     bad_rows.append(row)
-      #     continue
+        is_bad = self.is_bad_from_headers(row)
+        if is_bad:
+          logging.info("is bad email. row: %s", row)
+          bad_rows.append(row)
+          continue
 
-      #   try:
-      #     result = urllib2.urlopen(row[2])
-      #     if result.code == 200:
-      #       # logging.info("result: %s", result)
-      #       cleaned = self.clean_urlfetch_result(result, row)
-      #       logging.info("cleaned: %s", cleaned)
-      #       if not cleaned:
-      #         bad_rows.append(row)
-      #       else:
-      #         logging.warning("Problem with row. Will mark bad. Row: %s", row)
-      #         bad_rows.append(row)
-      #     else:
-      #       bad_rows.append(row)
-      #   except Exception as e:
-      #       logging.warning("Bad row: %s. e:%s", row, e)
-      #       bad_rows.append(row)
+        try:
+          result = urllib2.urlopen(row[2])
+          if result.code == 200:
+            # logging.info("result: %s", result)
+            cleaned = self.clean_urlfetch_result(result, row)
+            logging.info("cleaned: %s", cleaned)
+            if not cleaned:
+              bad_rows.append(row)
+            else:
+              logging.warning("Problem with row. Will mark bad. Row: %s", row)
+              bad_rows.append(row)
+          else:
+            bad_rows.append(row)
+        except Exception as e:
+            logging.warning("Bad row: %s. e:%s", row, e)
+            bad_rows.append(row)
 
-      # except Exception as e:
-      #   logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
-      #   bad_rows.append(row)
+      except Exception as e:
+        logging.warning("Bad row. Will mark bad. e: %s. . row: %s", e, row)
+        bad_rows.append(row)
 
     db.close()
 
