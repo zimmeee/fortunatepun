@@ -274,8 +274,8 @@ class URLExpanderHandler(webapp2.RequestHandler):
           if bad_end in expanded_url:
             logging.warning("pdf or gif -- bad")
             return False
-      except:
-        pass
+      except Exception as e:
+        logging.error("e: %s", e)
       # logging.info("expanded_url: %s", expanded_url)
       try:
         soup = BeautifulSoup(result.read())
@@ -399,8 +399,6 @@ class URLExpanderHandler(webapp2.RequestHandler):
             cleaned = self.clean_urlfetch_result(result, row)
             logging.info("cleaned: %s", cleaned)
             if not cleaned:
-              bad_rows.append(row)
-            else:
               logging.warning("Problem with row. Will mark bad. Row: %s", row)
               bad_rows.append(row)
           else:
